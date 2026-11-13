@@ -42,6 +42,20 @@ app.get("/music", (req, res) => {
   res.render('music', { data: music });
 });
 
+app.get("/music_add", (req, res) => {
+  // id は入力させず，既存の最大値+1 を自動採番する（重複入力を防ぐため）
+  const id = music.reduce( (max, m) => Math.max( max, m.id ), 0 ) + 1;
+  const newdata = {
+    id: id,
+    title: req.query.title,
+    artist: req.query.artist,
+    year: Number( req.query.year )
+  };
+  music.push( newdata );
+  // 8-1 で選んだ方針と同じく，登録後は一覧を表示する
+  res.render('music', { data: music });
+});
+
 app.get("/hello1", (req, res) => {
   const message1 = "Hello world";
   const message2 = "Bon jour";
