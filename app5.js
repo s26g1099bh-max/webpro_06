@@ -56,6 +56,49 @@ app.get("/music_add", (req, res) => {
   res.render('music', { data: music });
 });
 
+let station2 = [
+  { id:1, code:"JE01", name:"東京駅", change:"総武本線，中央線，etc", passengers:403831, distance:0 },
+  { id:2, code:"JE02", name:"八丁堀駅", change:"日比谷線", passengers:31071, distance:1.2 },
+  { id:3, code:"JE05", name:"新木場駅", change:"有楽町線，りんかい線", passengers:67206, distance:7.4 },
+  { id:4, code:"JE07", name:"舞浜駅", change:"舞浜リゾートライン", passengers:76156,distance:12.7 },
+  { id:5, code:"JE12", name:"新習志野駅", change:"", passengers:11655, distance:28.3 },
+  { id:6, code:"JE17", name:"千葉みなと駅", change:"千葉都市モノレール", passengers:16602, distance:39.0 },
+  { id:7, code:"JE18", name:"蘇我駅", change:"内房線，外房線", passengers:31328, distance:43.0 },
+];
+
+app.get("/keiyo2", (req, res) => {
+  // 本来ならここにDBとのやり取りが入る
+  res.render('keiyo2', {data: station2} );
+});
+
+app.get("/keiyo2/:number", (req, res) => {
+  // 本来ならここにDBとのやり取りが入る
+  const number = req.params.number;
+  const detail = station2[ number ];
+  // 範囲外や数字以外だと detail が undefined になり，テンプレートで例外(500)になるため先に弾く
+  if( detail === undefined ) {
+    return res.status(404).send( '該当する駅がありません．<a href="/keiyo2">駅一覧に戻る</a>' );
+  }
+  res.render('keiyo2_detail', {data: detail} );
+});
+
+app.get("/keiyo2_add", (req, res) => {
+  // 数値項目は query では文字列で届くので Number に変換して保存する
+  // id は一覧の並び（URLの番号は配列の添字）と無関係に，最大値+1 を自動採番する
+  const id = station2.reduce( (max, s) => Math.max( max, s.id ), 0 ) + 1;
+  const newdata = {
+    id: id,
+    code: req.query.code,
+    name: req.query.name,
+    change: req.query.change || "",
+    passengers: Number( req.query.passengers ),
+    distance: Number( req.query.distance )
+  };
+  station2.push( newdata );
+  // 8-1 で選んだ方針と同じく，登録後は一覧を表示する
+  res.render('keiyo2', {data: station2} );
+});
+
 app.get("/hello1", (req, res) => {
   const message1 = "Hello world";
   const message2 = "Bon jour";
