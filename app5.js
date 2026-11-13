@@ -31,6 +31,17 @@ app.get("/keiyo_add", (req, res) => {
   res.render('db1', { data: station });
 });
 
+let music = [
+  { id:1, title:"Lemon", artist:"米津玄師", year:2018 },
+  { id:2, title:"夜に駆ける", artist:"YOASOBI", year:2019 },
+  { id:3, title:"小さな恋のうた", artist:"MONGOL800", year:2001 },
+  { id:4, title:"粉雪", artist:"レミオロメン", year:2005 },
+];
+
+app.get("/music", (req, res) => {
+  res.render('music', { data: music });
+});
+
 app.get("/hello1", (req, res) => {
   const message1 = "Hello world";
   const message2 = "Bon jour";
