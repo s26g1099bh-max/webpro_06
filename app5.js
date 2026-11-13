@@ -63,4 +63,27 @@ app.get("/janken", (req, res) => {
   res.render( 'janken', display );
 });
 
+// ラジオボタン版のじゃんけん（/janken は課題条件により変更しない）
+app.get("/janken2", (req, res) => {
+  const hands = ['グー', 'チョキ', 'パー'];
+  const hand = req.query.hand;
+  const yourIndex = hands.indexOf( hand );
+  if( yourIndex < 0 ) {
+    // ラジオボタン未選択や手動入力の不正値
+    return res.status(400).send( '手を選んでください．<a href="/public/janken2.html">戻る</a>' );
+  }
+  // 直接URLを叩かれて win / total が無い場合は NaN になるので 0 とみなす
+  let win = Number( req.query.win ) || 0;
+  let total = Number( req.query.total ) || 0;
+  const cpuIndex = Math.floor( Math.random() * 3 );
+  // グー(0)<チョキ(1)<パー(2)<グー の循環なので，差を3で割った余りで判定できる
+  const diff = ( yourIndex - cpuIndex + 3 ) % 3;
+  let judgement = '';
+  if( diff === 0 ) judgement = 'あいこ';
+  else if( diff === 2 ) { judgement = '勝ち'; win += 1; }  // グーに対してチョキ: 0-1+3=2
+  else judgement = '負け';
+  total += 1;
+  res.render( 'janken2', { your: hand, cpu: hands[cpuIndex], judgement, win, total } );
+});
+
 app.listen(8080, () => console.log("Example app listening on port 8080!"));
