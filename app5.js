@@ -132,6 +132,19 @@ app.post("/keiyo2/update/:number", (req, res) => {
   res.redirect('/keiyo2' );
 });
 
+// Delete
+app.get("/keiyo2/delete/:number", (req, res) => {
+  // 本来は削除の確認ページを表示する
+  // 本来ならここにDBとのやり取りが入る
+  const number = req.params.number;
+  // 数字以外だと splice が 0 番目を消してしまうので，存在しない番号は弾く
+  if( station2[number] === undefined ) {
+    return res.status(404).send( '該当する駅がありません．<a href="/keiyo2">駅一覧に戻る</a>' );
+  }
+  station2.splice( number, 1 );
+  res.redirect('/keiyo2' );
+});
+
 app.get("/keiyo2_add", (req, res) => {
   // 数値項目は query では文字列で届くので Number に変換して保存する
   // id は一覧の並び（URLの番号は配列の添字）と無関係に，最大値+1 を自動採番する
